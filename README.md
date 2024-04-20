@@ -8,10 +8,12 @@
 
 <h2>Project Screenshots:</h2>
 
-<img src="https://imgur.com/a/ZxdqIdD" alt="project-screenshot" width="689" height="289/">
+<img src="https://github.com/LemonpieGBS/cmdsweeper/blob/main/CMDS-screenshot_1.png" alt="project-screenshot-1" width="689" height="289/">
 
-<img src="https://imgur.com/a/yWYgh2G" alt="project-screenshot" width="825" height="385/">
+<img src="https://github.com/LemonpieGBS/cmdsweeper/blob/main/CMDS-screenshot_2.png" alt="project-screenshot-2" width="825" height="385/">
 
-<h2>🛠️ Installation Steps:</h2>
+<h2>Installation Steps:</h2>
 
 <p>1. Download the .zip and then you can either compile the .cpp or execute the .exe on /output directly :)</p>
+
+<h2>Thanks a lot for reading!</h2>
