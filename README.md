@@ -4,7 +4,7 @@
 
 <p id="description">cmdsweeper is a clone of the popular windows game Minesweeper. With the twist of it being completely playable from your console! Use WASD to move your cursor enter to mine a field and B to flag one! This project is build entirely on C++ and was made as a proof of concept while trying to learn how to program. Hope you enjoy!</p>
 
-<p align="center"><img src="https://img.shields.io/badge/Author-LemonpieGBS-green" alt="shields"><img src="https://img.shields.io/badge/Written_In-C%2B%2B-purple" alt="shields"><img src="https://img.shields.io/badge/Open_Source-blue" alt="shields"></p>
+<p align="center"><img src="https://img.shields.io/badge/Author-LemonpieGBS-green" alt="shields"> <img src="https://img.shields.io/badge/Written_In-C%2B%2B-purple" alt="shields"> <img src="https://img.shields.io/badge/Open_Source-blue" alt="shields"></p>
 
 <h2>Project Screenshots:</h2>
 
