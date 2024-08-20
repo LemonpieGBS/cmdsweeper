@@ -4,6 +4,7 @@
 #include <tgmath.h>
 #include <time.h>
 #include <limits>
+#include <string>
 
 #define BRIGHT_RED 207
 #define BRIGHT_GREEN 175
