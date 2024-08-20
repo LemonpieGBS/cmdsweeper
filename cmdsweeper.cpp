@@ -40,12 +40,11 @@ float clamp(float val, float low_boundary, float high_boundary);
 void array_randomize(int arr[], int arr_size);
 void array_cout(int arr[], int arr_size);
 void analyze_bombs(Field field_arr[], int field_position, int brd_width, int brd_height);
-int analyze_flags(Field field_arr[], int field_position, int brd_width, int brd_height);
 void gotoxy(int x, int y);
 void update_cursor(int pos, int old_pos, int brd_width, int color);
 void reset_color() { SetConsoleTextAttribute(hConsole, 15); }
-void show_field(Field field_arr[], int pos, int brd_width, int brd_height, bool ignore_flags = false, int order = 0);
-void show_surrounding_fields(Field field_arr[], int pos, int brd_width, int brd_height, bool ignore_flags = false);
+void show_field(Field field_arr[], int pos, int brd_width, int brd_height);
+void show_surrounding_fields(Field field_arr[], int pos, int brd_width, int brd_height);
 void flag_field(Field field_arr[], int pos, int brd_width);
 void declare_template(GmTemplate temp_arr[], int temp_pos, std::string parname, int parwidth, int parheight, int parbomb, int parcolor);
 void screen_refresh(Field field_arr[], int width, int height);
@@ -66,7 +65,7 @@ int main() {
 
     INPUTS move_receiver = DNULL, old_move_receiver = DNULL;
 
-    std::string mode_string_1, mode_string_2, timer_string, version = "1.1.0";
+    std::string mode_string_1, mode_string_2, timer_string, version = "1.0.0";
 
     // Set Game Templates
     const int template_amount = 5;
@@ -291,7 +290,7 @@ int main() {
         // If enter is pressed for the first frame, it will mine
         if(return_time == 1) {
 
-            show_field(fields,game_cursor,width,height,true,1);
+            if(!fields[game_cursor].field_flagged) show_field(fields,game_cursor,width,height);
 
             if(fields[game_cursor].bomb_innit && !fields[game_cursor].field_flagged) {
                 for(int i = 0; i < ttl_area; i++) {
@@ -487,35 +486,6 @@ void analyze_bombs(Field field_arr[], int field_position, int brd_width, int brd
     field_arr[field_position].bomb_amount = bomb_amounts;
 }
 
-int analyze_flags(Field field_arr[], int field_position, int brd_width, int brd_height) {
-
-    // Detect the limits
-    bool alt_right = false, alt_left = false, alt_up = false, alt_down = false;
-    if(field_position % brd_width == 0) alt_left = true;
-    if((field_position + 1) % brd_width == 0) alt_right = true;
-    if(field_position < brd_width) alt_up = true;
-    if(field_position >= brd_width*brd_height - brd_width) alt_down = true;
-
-    int flag_amount = 0;
-
-    if(!alt_right) {
-        flag_amount += field_arr[field_position + 1].field_flagged;
-        if(!alt_down) { flag_amount += field_arr[field_position + brd_width + 1].field_flagged; }
-        if(!alt_up) { flag_amount += field_arr[field_position - brd_width + 1].field_flagged; }
-    }
-
-    if(!alt_left) {
-        flag_amount += field_arr[field_position - 1].field_flagged;
-        if(!alt_down) { flag_amount += field_arr[field_position + brd_width - 1].field_flagged; }
-        if(!alt_up) { flag_amount += field_arr[field_position - brd_width - 1].field_flagged; }
-    }
-
-    if(!alt_down) { flag_amount += field_arr[field_position + brd_width].field_flagged; }
-    if(!alt_up) { flag_amount += field_arr[field_position - brd_width].field_flagged; }
-
-    return flag_amount;
-}
-
 void gotoxy(int x, int y) { 
     HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleCursorPosition(output, {(short) x,(short) y});
@@ -543,17 +513,9 @@ void update_cursor(int pos, int old_pos, int brd_width, int color) {
     }
 }
 
-void show_field(Field field_arr[], int pos, int brd_width, int brd_height, bool ignore_flags, int order) {
+void show_field(Field field_arr[], int pos, int brd_width, int brd_height) {
 
-    if(field_arr[pos].field_shown && field_arr[pos].bomb_amount != 0 && order == 1) {
-
-        int flag_count = analyze_flags(field_arr,pos,brd_width,brd_height);
-
-        if(flag_count == field_arr[pos].bomb_amount) { show_surrounding_fields(field_arr,pos,brd_width,brd_height,true); }
-        return;
-
-    } else if(field_arr[pos].field_shown) return;
-    if(ignore_flags == true && field_arr[pos].field_flagged) return;
+    if(field_arr[pos].field_shown) { return; }
 
     int x_coord = pos % brd_width;
     int y_coord = ceil( (float) (pos + 1) / brd_width) - 1;
@@ -588,7 +550,7 @@ void show_field(Field field_arr[], int pos, int brd_width, int brd_height, bool 
     reset_color();
 }
 
-void show_surrounding_fields(Field field_arr[], int pos, int brd_width, int brd_height, bool ignore_flags) {
+void show_surrounding_fields(Field field_arr[], int pos, int brd_width, int brd_height) {
 
     int x_coord = pos % brd_width;
     int y_coord = ceil( (float) (pos + 1) / brd_width) - 1;
@@ -600,20 +562,20 @@ void show_surrounding_fields(Field field_arr[], int pos, int brd_width, int brd_
     if(y_coord == brd_height - 1) alt_down = true;
 
     if(!alt_right) {
-        show_field(field_arr,pos+1,brd_width,brd_height, ignore_flags);
+        show_field(field_arr,pos+1,brd_width,brd_height);
             
-        if(!alt_down) { show_field(field_arr,pos+brd_width+1,brd_width,brd_height, ignore_flags); }
-        if(!alt_up) { show_field(field_arr,pos-brd_width+1,brd_width,brd_height, ignore_flags); }
+        if(!alt_down) { show_field(field_arr,pos+brd_width+1,brd_width,brd_height); }
+        if(!alt_up) { show_field(field_arr,pos-brd_width+1,brd_width,brd_height); }
     }
 
     if(!alt_left) {
-        show_field(field_arr,pos-1,brd_width,brd_height, ignore_flags);
-        if(!alt_down) { show_field(field_arr,pos+brd_width-1,brd_width,brd_height, ignore_flags); }
-        if(!alt_up) { show_field(field_arr,pos-brd_width-1,brd_width,brd_height, ignore_flags); }
+        show_field(field_arr,pos-1,brd_width,brd_height);
+        if(!alt_down) { show_field(field_arr,pos+brd_width-1,brd_width,brd_height); }
+        if(!alt_up) { show_field(field_arr,pos-brd_width-1,brd_width,brd_height); }
     }
 
-    if(!alt_down) { show_field(field_arr,pos+brd_width,brd_width,brd_height, ignore_flags); }
-    if(!alt_up) { show_field(field_arr,pos-brd_width,brd_width,brd_height, ignore_flags); }
+    if(!alt_down) { show_field(field_arr,pos+brd_width,brd_width,brd_height); }
+    if(!alt_up) { show_field(field_arr,pos-brd_width,brd_width,brd_height); }
 }
 
 void flag_field(Field field_arr[], int pos, int brd_width) {
